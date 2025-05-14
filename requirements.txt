@@ -64,7 +64,7 @@ nest-asyncio==1.5.8
 networkx==3.4.2
 notebook==7.2.2
 notebook_shim==0.2.4
-numpy==1.26.3
+numpy==1.26.4
 opencv-python==4.9.0.80
 overrides==7.7.0
 packaging==23.2
