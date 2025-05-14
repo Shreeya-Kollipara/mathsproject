@@ -1,0 +1,1149 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Algebra Toolkit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #3f51b5;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        header h1 {
+            margin: 0;
+        }
+        
+        .tabs {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            background-color: #fff;
+            margin: 0 0 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .tabs li {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tabs li.active {
+            background-color: #3f51b5;
+            color: #fff;
+        }
+        
+        .tab-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            margin: 4px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: #3f51b5;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #303f9f;
+        }
+        
+        .matrix-container, .vector-container {
+            margin: 15px 0;
+        }
+        
+        .matrix-row {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .matrix-controls {
+            margin-bottom: 10px;
+        }
+        
+        .matrix-controls label {
+            margin-right: 10px;
+        }
+        
+        .result-area {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8eaf6;
+            border-radius: 5px;
+        }
+        
+        .error-message {
+            color: #f44336;
+            margin: 10px 0;
+        }
+        
+        .matrix-bracket {
+            font-size: 24px;
+            margin: 0 5px;
+        }
+        
+        .operation-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        .tab-section {
+            margin-bottom: 20px;
+        }
+        
+        h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #3f51b5;
+        }
+        
+        .result-matrix {
+            margin: 10px auto;
+            border-collapse: collapse;
+        }
+        
+        .result-matrix td {
+            padding: 5px 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #3f51b5;
+            margin: 20px 0;
+        }
+        
+        .side-by-side {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .matrix-block, .vector-block {
+            margin: 10px;
+        }
+        /* Add these new styles to your existing CSS */
+.matrix-text-input {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.matrix-text-input textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    resize: vertical;
+}
+
+.matrix-text-input button {
+    margin-top: 5px;
+}
+
+/* Optional: Make text inputs responsive */
+@media (max-width: 768px) {
+    .side-by-side {
+        flex-direction: column;
+    }
+    
+    .matrix-block, .vector-block {
+        width: 100%;
+    }
+}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Linear Algebra Toolkit</h1>
+            <p>Perform various linear algebra operations with ease</p>
+        </div>
+    </header>
+    <!-- Matrix Operations Tab -->
+<div id="matrix-operations" class="tab-pane active">
+    <div class="tab-section">
+        <h3>Matrix Operations</h3>
+        <div class="side-by-side">
+            <div class="matrix-block">
+                <h4>Matrix A</h4>
+                <div class="matrix-controls">
+                    <label>
+                        Rows: <input type="number" id="matrix-a-rows" value="2" min="1" max="10">
+                    </label>
+                    <label>
+                        Columns: <input type="number" id="matrix-a-cols" value="2" min="1" max="10">
+                    </label>
+                    <button onclick="resizeMatrix('a')">Resize</button>
+                </div>
+                <div id="matrix-a-container" class="matrix-container"></div>
+                
+                <!-- New text input for Matrix A -->
+                <div class="matrix-text-input">
+                    <h5>Or enter as text:</h5>
+                    <textarea id="matrix-a-text" placeholder="Example: 1 2; 3 4 (Use spaces between columns and semicolons between rows)" rows="4"></textarea>
+                    <button onclick="parseMatrixText('a')">Parse Matrix</button>
+                </div>
+            </div>
+            
+            <div class="matrix-block">
+                <h4>Matrix B</h4>
+                <div class="matrix-controls">
+                    <label>
+                        Rows: <input type="number" id="matrix-b-rows" value="2" min="1" max="10">
+                    </label>
+                    <label>
+                        Columns: <input type="number" id="matrix-b-cols" value="2" min="1" max="10">
+                    </label>
+                    <button onclick="resizeMatrix('b')">Resize</button>
+                </div>
+                <div id="matrix-b-container" class="matrix-container"></div>
+                
+                <!-- New text input for Matrix B -->
+                <div class="matrix-text-input">
+                    <h5>Or enter as text:</h5>
+                    <textarea id="matrix-b-text" placeholder="Example: 1 2; 3 4 (Use spaces between columns and semicolons between rows)" rows="4"></textarea>
+                    <button onclick="parseMatrixText('b')">Parse Matrix</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="operation-buttons">
+            <button onclick="performMatrixOperation('add')">Add Matrices (A+B)</button>
+            <button onclick="performMatrixOperation('multiply')">Multiply Matrices (A×B)</button>
+            <button onclick="performMatrixOperation('determinant', 'a')">Determinant of A</button>
+            <button onclick="performMatrixOperation('inverse', 'a')">Inverse of A</button>
+            <button onclick="performMatrixOperation('transpose', 'a')">Transpose of A</button>
+            <button onclick="performMatrixOperation('rank', 'a')">Rank of A</button>
+            <button onclick="performMatrixOperation('determinant', 'b')">Determinant of B</button>
+            <button onclick="performMatrixOperation('inverse', 'b')">Inverse of B</button>
+            <button onclick="performMatrixOperation('transpose', 'b')">Transpose of B</button>
+            <button onclick="performMatrixOperation('rank', 'b')">Rank of B</button>
+            <button onclick="performMatrixOperation('svd', 'a')">SVD of A</button>
+        </div>
+    </div>
+    
+    <div id="matrix-result" class="result-area" style="display: none;">
+        <h3>Result:</h3>
+        <div id="matrix-result-content"></div>
+    </div>
+</div>
+    
+    <script>
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tabs
+            const tabs = document.querySelectorAll('#main-tabs li');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all tab panes
+                    const tabPanes = document.querySelectorAll('.tab-pane');
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    
+                    // Show the selected tab pane
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Initialize matrices and vectors
+            initializeMatrices();
+            initializeSystem();
+            initializeEigenMatrix();
+            initializeVectors();
+        });
+        
+        // Matrix and vector initialization
+        function initializeMatrices() {
+            createMatrix('a', 2, 2);
+            createMatrix('b', 2, 2);
+        }
+        
+        function initializeSystem() {
+            createMatrix('system', 2, 2);
+            createVector('system', 2);
+        }
+        
+        function initializeEigenMatrix() {
+            createSquareMatrix('eigen', 2);
+        }
+        
+        function initializeVectors() {
+            createVector('a', 3);
+            createVector('b', 3);
+        }
+        
+        // Matrix creation functions
+        function createMatrix(id, rows, cols) {
+            const container = document.getElementById(`${id}-matrix-container`);
+            container.innerHTML = '';
+            
+            for (let i = 0; i < rows; i++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'matrix-row';
+                
+                for (let j = 0; j < cols; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = 'any';
+                    input.value = i === j ? 1 : 0; // Identity matrix as default
+                    input.id = `${id}-${i}-${j}`;
+                    rowDiv.appendChild(input);
+                }
+                
+                container.appendChild(rowDiv);
+            }
+        }
+        
+        function createSquareMatrix(id, size) {
+            createMatrix(id, size, size);
+        }
+        
+        function createVector(id, size) {
+            const container = document.getElementById(`${id}-vector-container`);
+            container.innerHTML = '';
+            
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'matrix-row';
+            
+            for (let i = 0; i < size; i++) {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.step = 'any';
+                input.value = i + 1; // Default values 1, 2, 3, ...
+                input.id = `vector-${id}-${i}`;
+                rowDiv.appendChild(input);
+            }
+            
+            container.appendChild(rowDiv);
+        }
+        
+        // Resize functions
+        function resizeMatrix(id) {
+            const rows = parseInt(document.getElementById(`matrix-${id}-rows`).value);
+            const cols = parseInt(document.getElementById(`matrix-${id}-cols`).value);
+            
+            if (rows > 0 && cols > 0 && rows <= 10 && cols <= 10) {
+                createMatrix(id, rows, cols);
+            } else {
+                alert('Please enter valid dimensions (1-10)');
+            }
+        }
+        
+        function resizeSystem() {
+            const rows = parseInt(document.getElementById('system-rows').value);
+            const cols = parseInt(document.getElementById('system-cols').value);
+            
+            if (rows > 0 && cols > 0 && rows <= 10 && cols <= 10) {
+                createMatrix('system', rows, cols);
+                createVector('system', rows);
+            } else {
+                alert('Please enter valid dimensions (1-10)');
+            }
+        }
+        
+        function resizeEigenMatrix() {
+            const size = parseInt(document.getElementById('eigen-size').value);
+            
+            if (size > 0 && size <= 10) {
+                createSquareMatrix('eigen', size);
+            } else {
+                alert('Please enter a valid dimension (1-10)');
+            }
+        }
+        
+        function resizeVector(id) {
+            const size = parseInt(document.getElementById(`vector-${id}-size`).value);
+            
+            if (size > 0 && size <= 10) {
+                createVector(id, size);
+            } else {
+                alert('Please enter a valid size (1-10)');
+            }
+        }
+        
+        // Get matrix and vector values
+        function getMatrixValues(id) {
+            const rows = parseInt(document.getElementById(`matrix-${id}-rows`).value);
+            const cols = parseInt(document.getElementById(`matrix-${id}-cols`).value);
+            const matrix = [];
+            
+            for (let i = 0; i < rows; i++) {
+                const row = [];
+                for (let j = 0; j < cols; j++) {
+                    const value = parseFloat(document.getElementById(`${id}-${i}-${j}`).value);
+                    row.push(isNaN(value) ? 0 : value);
+                }
+                matrix.push(row);
+            }
+            
+            return matrix;
+        }
+        
+        function getSystemMatrixValues() {
+            const rows = parseInt(document.getElementById('system-rows').value);
+            const cols = parseInt(document.getElementById('system-cols').value);
+            const matrix = [];
+            
+            for (let i = 0; i < rows; i++) {
+                const row = [];
+                for (let j = 0; j < cols; j++) {
+                    const value = parseFloat(document.getElementById(`system-${i}-${j}`).value);
+                    row.push(isNaN(value) ? 0 : value);
+                }
+                matrix.push(row);
+            }
+            
+            return matrix;
+        }
+        
+        function getSystemVectorValues() {
+            const rows = parseInt(document.getElementById('system-rows').value);
+            const vector = [];
+            
+            for (let i = 0; i < rows; i++) {
+                const value = parseFloat(document.getElementById(`vector-system-${i}`).value);
+                vector.push(isNaN(value) ? 0 : value);
+            }
+            
+            return vector;
+        }
+        
+        function getEigenMatrixValues() {
+            const size = parseInt(document.getElementById('eigen-size').value);
+            const matrix = [];
+            
+            for (let i = 0; i < size; i++) {
+                const row = [];
+                for (let j = 0; j < size; j++) {
+                    const value = parseFloat(document.getElementById(`eigen-${i}-${j}`).value);
+                    row.push(isNaN(value) ? 0 : value);
+                }
+                matrix.push(row);
+            }
+            
+            return matrix;
+        }
+        
+        function getVectorValues(id) {
+            const size = parseInt(document.getElementById(`vector-${id}-size`).value);
+            const vector = [];
+            
+            for (let i = 0; i < size; i++) {
+                const value = parseFloat(document.getElementById(`vector-${id}-${i}`).value);
+                vector.push(isNaN(value) ? 0 : value);
+            }
+            
+            return vector;
+        }
+        
+        // API operations
+        async function performMatrixOperation(operation, matrixId = null) {
+            let requestData = {};
+            let endpoint = `/api/matrix/${operation}`;
+            
+            try {
+                // Prepare request data based on operation
+                if (operation === 'add' || operation === 'multiply') {
+                    requestData = {
+                        matrixA: getMatrixValues('a'),
+                        matrixB: getMatrixValues('b')
+                    };
+                } else {
+                    // Single matrix operations
+                    requestData = {
+                        matrix: getMatrixValues(matrixId)
+                    };
+                }
+                
+                // Show loading state
+                document.getElementById('matrix-result').style.display = 'block';
+                document.getElementById('matrix-result-content').innerHTML = '<div class="loading">Processing...</div>';
+                
+                // Make API request
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                
+                // Display result
+                if (data.error) {
+                    document.getElementById('matrix-result-content').innerHTML = `
+                        <div class="error-message">${data.error}</div>
+                    `;
+                } else {
+                    displayMatrixResult(data, operation);
+                }
+            } catch (error) {
+                document.getElementById('matrix-result-content').innerHTML = `
+                    <div class="error-message">An error occurred: ${error.message}</div>
+                `;
+            }
+        }
+        
+        async function solveSystem() {
+            try {
+                const requestData = {
+                    coefficients: getSystemMatrixValues(),
+                    constants: getSystemVectorValues()
+                };
+                
+                // Show loading state
+                // This continues from where the document was cut off
+
+                document.getElementById('system-result').style.display = 'block';
+                document.getElementById('system-result-content').innerHTML = '<div class="loading">Processing...</div>';
+                
+                // Make API request
+                const response = await fetch('/api/system/solve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                
+                // Display result
+                if (data.error) {
+                    document.getElementById('system-result-content').innerHTML = `
+                        <div class="error-message">${data.error}</div>
+                    `;
+                } else {
+                    displaySystemResult(data);
+                }
+            } catch (error) {
+                document.getElementById('system-result-content').innerHTML = `
+                    <div class="error-message">An error occurred: ${error.message}</div>
+                `;
+            }
+        }
+        
+        async function computeEigen() {
+            try {
+                const requestData = {
+                    matrix: getEigenMatrixValues()
+                };
+                
+                // Show loading state
+                document.getElementById('eigen-result').style.display = 'block';
+                document.getElementById('eigen-result-content').innerHTML = '<div class="loading">Processing...</div>';
+                
+                // Make API request
+                const response = await fetch('/api/matrix/eigen', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                
+                // Display result
+                if (data.error) {
+                    document.getElementById('eigen-result-content').innerHTML = `
+                        <div class="error-message">${data.error}</div>
+                    `;
+                } else {
+                    displayEigenResult(data);
+                }
+            } catch (error) {
+                document.getElementById('eigen-result-content').innerHTML = `
+                    <div class="error-message">An error occurred: ${error.message}</div>
+                `;
+            }
+        }
+        
+        async function performVectorOperation(operation) {
+            try {
+                const requestData = {
+                    vectorA: getVectorValues('a'),
+                    vectorB: getVectorValues('b')
+                };
+                
+                // Show loading state
+                document.getElementById('vector-result').style.display = 'block';
+                document.getElementById('vector-result-content').innerHTML = '<div class="loading">Processing...</div>';
+                
+                // Make API request
+                const response = await fetch(`/api/vector/${operation}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                
+                // Display result
+                if (data.error) {
+                    document.getElementById('vector-result-content').innerHTML = `
+                        <div class="error-message">${data.error}</div>
+                    `;
+                } else {
+                    displayVectorResult(data, operation);
+                }
+            } catch (error) {
+                document.getElementById('vector-result-content').innerHTML = `
+                    <div class="error-message">An error occurred: ${error.message}</div>
+                `;
+            }
+        }
+        
+        // Result display functions
+        function displayMatrixResult(data, operation) {
+            let html = '';
+            
+            if (operation === 'determinant' || operation === 'rank') {
+                html = `<p>${operation.charAt(0).toUpperCase() + operation.slice(1)}: ${data.result}</p>`;
+            } else if (operation === 'svd') {
+                html = `<h4>Singular Value Decomposition (SVD)</h4>
+                        <div class="svd-result">
+                            <div class="matrix-block">
+                                <h5>U Matrix:</h5>
+                                ${formatMatrixHTML(data.U)}
+                            </div>
+                            <div class="matrix-block">
+                                <h5>Σ Vector (Singular Values):</h5>
+                                ${formatVectorHTML(data.S)}
+                            </div>
+                            <div class="matrix-block">
+                                <h5>V<sup>T</sup> Matrix:</h5>
+                                ${formatMatrixHTML(data.Vt)}
+                            </div>
+                        </div>`;
+            } else {
+                html = `<h4>${getOperationTitle(operation)}</h4>
+                        ${formatMatrixHTML(data.result)}`;
+            }
+            
+            document.getElementById('matrix-result-content').innerHTML = html;
+        }
+        
+        function displaySystemResult(data) {
+            let html = '';
+            
+            if (data.unique) {
+                html = `<h4>Unique Solution:</h4>
+                        ${formatVectorHTML(data.solution, 'x')}`;
+            } else if (data.solution) {
+                html = `<h4>General Solution:</h4>
+                        <p>${data.solution}</p>`;
+            } else {
+                html = `<p>${data.message}</p>`;
+            }
+            
+            document.getElementById('system-result-content').innerHTML = html;
+        }
+        
+        function displayEigenResult(data) {
+            let html = `<h4>Eigenvalues:</h4>
+                      ${formatVectorHTML(data.eigenvalues, 'λ')}
+                      <h4>Eigenvectors:</h4>`;
+                      
+            for (let i = 0; i < data.eigenvectors.length; i++) {
+                html += `<div class="eigen-pair">
+                          <p>For λ${i+1} = ${data.eigenvalues[i]}:</p>
+                          ${formatVectorHTML(data.eigenvectors[i], 'v')}
+                        </div>`;
+            }
+            
+            document.getElementById('eigen-result-content').innerHTML = html;
+        }
+        
+        function displayVectorResult(data, operation) {
+            let html = '';
+            
+            if (operation === 'dot') {
+                html = `<p>Dot Product (A·B): ${data.result}</p>`;
+            } else if (operation === 'cross') {
+                html = `<h4>Cross Product (A×B):</h4>
+                        ${formatVectorHTML(data.result)}`;
+            }
+            
+            document.getElementById('vector-result-content').innerHTML = html;
+        }
+        
+        // Helper functions for displaying results
+        function formatMatrixHTML(matrix) {
+            let html = '<table class="result-matrix">';
+            
+            for (let i = 0; i < matrix.length; i++) {
+                html += '<tr>';
+                for (let j = 0; j < matrix[i].length; j++) {
+                    html += `<td>${formatNumber(matrix[i][j])}</td>`;
+                }
+                html += '</tr>';
+            }
+            
+            html += '</table>';
+            return html;
+        }
+        
+        function formatVectorHTML(vector, variable = null) {
+            let html = '<table class="result-matrix">';
+            
+            html += '<tr>';
+            for (let i = 0; i < vector.length; i++) {
+                html += `<td>${variable ? `${variable}<sub>${i+1}</sub>` : ''} = ${formatNumber(vector[i])}</td>`;
+            }
+            html += '</tr>';
+            
+            html += '</table>';
+            return html;
+        }
+        
+        function formatNumber(num) {
+            if (typeof num === 'number') {
+                // Convert to string with up to 4 decimal places
+                return parseFloat(num.toFixed(4)).toString();
+            }
+            return num;
+        }
+        
+        function getOperationTitle(operation) {
+            const titles = {
+                'add': 'Matrix Addition (A+B)',
+                'multiply': 'Matrix Multiplication (A×B)',
+                'inverse': 'Matrix Inverse',
+                'transpose': 'Matrix Transpose'
+            };
+            
+            return titles[operation] || operation.charAt(0).toUpperCase() + operation.slice(1);
+        }
+        
+        // Utility functions
+        function validateMatrixForOperation(matrixA, matrixB, operation) {
+            if (operation === 'add') {
+                if (matrixA.length !== matrixB.length || matrixA[0].length !== matrixB[0].length) {
+                    return { valid: false, message: 'Matrices must have the same dimensions for addition' };
+                }
+            } else if (operation === 'multiply') {
+                if (matrixA[0].length !== matrixB.length) {
+                    return { valid: false, message: 'Number of columns in A must equal number of rows in B for multiplication' };
+                }
+            }
+            
+            return { valid: true };
+        }
+        
+        function validateVectorOperation(vectorA, vectorB, operation) {
+            if (!Array.isArray(vectorA) || !Array.isArray(vectorB)) {
+                return { valid: false, message: 'Both inputs must be vectors' };
+            }
+            if (operation === 'dot' || operation === 'add' || operation === 'subtract') {
+                if (vectorA.length !== vectorB.length) {
+                    return { valid: false, message: 'Vectors must be of the same length for this operation' };
+                }
+            }
+            if (operation === 'cross') {
+                if (vectorA.length !== 3 || vectorB.length !== 3) {
+                    return { valid: false, message: 'Cross product is only defined for 3-dimensional vectors' };
+                }
+            }
+            return { valid: true };
+        }
+        // Add these functions to your existing JavaScript
+
+/**
+ * Parse matrix text input and update the matrix inputs
+ */
+function parseMatrixText(id) {
+    const text = document.getElementById(`matrix-${id}-text`).value.trim();
+    
+    if (!text) {
+        alert('Please enter matrix values.');
+        return;
+    }
+    
+    try {
+        // Split the text by semicolons to get rows
+        const rows = text.split(';');
+        const matrix = [];
+        
+        // Process each row
+        for (let i = 0; i < rows.length; i++) {
+            const rowValues = rows[i].trim().split(/\s+/);
+            const numericRow = rowValues.map(val => {
+                const num = parseFloat(val);
+                if (isNaN(num)) {
+                    throw new Error(`Invalid number: ${val}`);
+                }
+                return num;
+            });
+            matrix.push(numericRow);
+        }
+        
+        // Validate matrix (check if all rows have the same number of columns)
+        const cols = matrix[0].length;
+        for (let i = 1; i < matrix.length; i++) {
+            if (matrix[i].length !== cols) {
+                throw new Error('All rows must have the same number of columns.');
+            }
+        }
+        
+        // Update matrix dimensions and recreate the input fields
+        document.getElementById(`matrix-${id}-rows`).value = matrix.length;
+        document.getElementById(`matrix-${id}-cols`).value = cols;
+        createMatrix(id, matrix.length, cols);
+        
+        // Fill in the values
+        for (let i = 0; i < matrix.length; i++) {
+            for (let j = 0; j < cols; j++) {
+                document.getElementById(`${id}-${i}-${j}`).value = matrix[i][j];
+            }
+        }
+        
+    } catch (error) {
+        alert(`Error parsing matrix: ${error.message}`);
+    }
+}
+
+/**
+ * Generate matrix text representation from the current matrix inputs
+ */
+function generateMatrixText(id) {
+    const rows = parseInt(document.getElementById(`matrix-${id}-rows`).value);
+    const cols = parseInt(document.getElementById(`matrix-${id}-cols`).value);
+    let text = '';
+    
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            const value = document.getElementById(`${id}-${i}-${j}`).value;
+            text += value + (j < cols - 1 ? ' ' : '');
+        }
+        if (i < rows - 1) {
+            text += ';\n';
+        }
+    }
+    
+    document.getElementById(`matrix-${id}-text`).value = text;
+}
+
+// Add a button to generate text representation of matrices
+function addTextRepresentationButtons() {
+    // For Matrix A
+    const matrixAContainer = document.querySelector('.matrix-block:nth-child(1) .matrix-text-input');
+    const generateButtonA = document.createElement('button');
+    generateButtonA.textContent = 'Generate Text from Matrix';
+    generateButtonA.onclick = function() { generateMatrixText('a'); };
+    matrixAContainer.appendChild(generateButtonA);
+    
+    // For Matrix B
+    const matrixBContainer = document.querySelector('.matrix-block:nth-child(2) .matrix-text-input');
+    const generateButtonB = document.createElement('button');
+    generateButtonB.textContent = 'Generate Text from Matrix';
+    generateButtonB.onclick = function() { generateMatrixText('b'); };
+    matrixBContainer.appendChild(generateButtonB);
+}
+
+// Add similar text input functionality for system, eigen and vector tabs
+function addTextInputsToOtherTabs() {
+    // System of equations
+    const systemMatrixContainer = document.querySelector('#systems .matrix-block');
+    const systemTextInput = document.createElement('div');
+    systemTextInput.className = 'matrix-text-input';
+    systemTextInput.innerHTML = `
+        <h5>Or enter coefficient matrix as text:</h5>
+        <textarea id="system-matrix-text" placeholder="Example: 1 2; 3 4 (Use spaces between columns and semicolons between rows)" rows="4"></textarea>
+        <button onclick="parseSystemMatrixText()">Parse Matrix</button>
+    `;
+    systemMatrixContainer.appendChild(systemTextInput);
+    
+    // System vector
+    const systemVectorContainer = document.querySelector('#systems .vector-block');
+    const systemVectorTextInput = document.createElement('div');
+    systemVectorTextInput.className = 'matrix-text-input';
+    systemVectorTextInput.innerHTML = `
+        <h5>Or enter constants vector as text:</h5>
+        <textarea id="system-vector-text" placeholder="Example: 5 6 (Space-separated values)" rows="2"></textarea>
+        <button onclick="parseSystemVectorText()">Parse Vector</button>
+    `;
+    systemVectorContainer.appendChild(systemVectorTextInput);
+    
+    // Eigen matrix
+    const eigenMatrixContainer = document.querySelector('#eigen .matrix-block');
+    const eigenTextInput = document.createElement('div');
+    eigenTextInput.className = 'matrix-text-input';
+    eigenTextInput.innerHTML = `
+        <h5>Or enter matrix as text:</h5>
+        <textarea id="eigen-matrix-text" placeholder="Example: 1 2; 3 4 (Use spaces between columns and semicolons between rows)" rows="4"></textarea>
+        <button onclick="parseEigenMatrixText()">Parse Matrix</button>
+    `;
+    eigenMatrixContainer.appendChild(eigenTextInput);
+    
+    // Vector A
+    const vectorAContainer = document.querySelector('#vectors .vector-block:nth-child(1)');
+    const vectorATextInput = document.createElement('div');
+    vectorATextInput.className = 'matrix-text-input';
+    vectorATextInput.innerHTML = `
+        <h5>Or enter vector as text:</h5>
+        <textarea id="vector-a-text" placeholder="Example: 1 2 3 (Space-separated values)" rows="2"></textarea>
+        <button onclick="parseVectorText('a')">Parse Vector</button>
+    `;
+    vectorAContainer.appendChild(vectorATextInput);
+    
+    // Vector B
+    const vectorBContainer = document.querySelector('#vectors .vector-block:nth-child(2)');
+    const vectorBTextInput = document.createElement('div');
+    vectorBTextInput.className = 'matrix-text-input';
+    vectorBTextInput.innerHTML = `
+        <h5>Or enter vector as text:</h5>
+        <textarea id="vector-b-text" placeholder="Example: 1 2 3 (Space-separated values)" rows="2"></textarea>
+        <button onclick="parseVectorText('b')">Parse Vector</button>
+    `;
+    vectorBContainer.appendChild(vectorBTextInput);
+}
+
+// Parse system matrix text
+function parseSystemMatrixText() {
+    const text = document.getElementById('system-matrix-text').value.trim();
+    
+    if (!text) {
+        alert('Please enter matrix values.');
+        return;
+    }
+    
+    try {
+        // Split the text by semicolons to get rows
+        const rows = text.split(';');
+        const matrix = [];
+        
+        // Process each row
+        for (let i = 0; i < rows.length; i++) {
+            const rowValues = rows[i].trim().split(/\s+/);
+            const numericRow = rowValues.map(val => {
+                const num = parseFloat(val);
+                if (isNaN(num)) {
+                    throw new Error(`Invalid number: ${val}`);
+                }
+                return num;
+            });
+            matrix.push(numericRow);
+        }
+        
+        // Validate matrix (check if all rows have the same number of columns)
+        const cols = matrix[0].length;
+        for (let i = 1; i < matrix.length; i++) {
+            if (matrix[i].length !== cols) {
+                throw new Error('All rows must have the same number of columns.');
+            }
+        }
+        
+        // Update matrix dimensions and recreate the input fields
+        document.getElementById('system-rows').value = matrix.length;
+        document.getElementById('system-cols').value = cols;
+        createMatrix('system', matrix.length, cols);
+        createVector('system', matrix.length);  // Also update the constants vector size
+        
+        // Fill in the values
+        for (let i = 0; i < matrix.length; i++) {
+            for (let j = 0; j < cols; j++) {
+                document.getElementById(`system-${i}-${j}`).value = matrix[i][j];
+            }
+        }
+        
+    } catch (error) {
+        alert(`Error parsing matrix: ${error.message}`);
+    }
+}
+
+// Parse system vector text
+function parseSystemVectorText() {
+    const text = document.getElementById('system-vector-text').value.trim();
+    
+    if (!text) {
+        alert('Please enter vector values.');
+        return;
+    }
+    
+    try {
+        // Split the text by spaces to get values
+        const values = text.trim().split(/\s+/);
+        const vector = values.map(val => {
+            const num = parseFloat(val);
+            if (isNaN(num)) {
+                throw new Error(`Invalid number: ${val}`);
+            }
+            return num;
+        });
+        
+        // Update vector size (should match the number of rows in the coefficient matrix)
+        const currentRows = parseInt(document.getElementById('system-rows').value);
+        if (vector.length !== currentRows) {
+            alert(`Warning: Vector size (${vector.length}) doesn't match the number of equations (${currentRows}).`);
+            // Optionally adjust the system size
+            // document.getElementById('system-rows').value = vector.length;
+            // createMatrix('system', vector.length, parseInt(document.getElementById('system-cols').value));
+        }
+        
+        // Update the vector input fields
+        createVector('system', vector.length);
+        
+        // Fill in the values
+        for (let i = 0; i < vector.length; i++) {
+            document.getElementById(`vector-system-${i}`).value = vector[i];
+        }
+        
+    } catch (error) {
+        alert(`Error parsing vector: ${error.message}`);
+    }
+}
+
+// Parse eigenvalues matrix text
+function parseEigenMatrixText() {
+    const text = document.getElementById('eigen-matrix-text').value.trim();
+    
+    if (!text) {
+        alert('Please enter matrix values.');
+        return;
+    }
+    
+    try {
+        // Split the text by semicolons to get rows
+        const rows = text.split(';');
+        const matrix = [];
+        
+        // Process each row
+        for (let i = 0; i < rows.length; i++) {
+            const rowValues = rows[i].trim().split(/\s+/);
+            const numericRow = rowValues.map(val => {
+                const num = parseFloat(val);
+                if (isNaN(num)) {
+                    throw new Error(`Invalid number: ${val}`);
+                }
+                return num;
+            });
+            matrix.push(numericRow);
+        }
+        
+        // Validate matrix (check if it's square)
+        const rows_count = matrix.length;
+        for (let i = 0; i < rows_count; i++) {
+            if (matrix[i].length !== rows_count) {
+                throw new Error('For eigenvalue calculation, the matrix must be square.');
+            }
+        }
+        
+        // Update matrix dimensions and recreate the input fields
+        document.getElementById('eigen-size').value = rows_count;
+        createSquareMatrix('eigen', rows_count);
+        
+        // Fill in the values
+        for (let i = 0; i < rows_count; i++) {
+            for (let j = 0; j < rows_count; j++) {
+                document.getElementById(`eigen-${i}-${j}`).value = matrix[i][j];
+            }
+        }
+        
+    } catch (error) {
+        alert(`Error parsing matrix: ${error.message}`);
+    }
+}
+
+// Parse vector text
+function parseVectorText(id) {
+    const text = document.getElementById(`vector-${id}-text`).value.trim();
+    
+    if (!text) {
+        alert('Please enter vector values.');
+        return;
+    }
+    
+    try {
+        // Split the text by spaces to get values
+        const values = text.trim().split(/\s+/);
+        const vector = values.map(val => {
+            const num = parseFloat(val);
+            if (isNaN(num)) {
+                throw new Error(`Invalid number: ${val}`);
+            }
+            return num;
+        });
+        
+        // Update vector size
+        document.getElementById(`vector-${id}-size`).value = vector.length;
+        createVector(id, vector.length);
+        
+        // Fill in the values
+        for (let i = 0; i < vector.length; i++) {
+            document.getElementById(`vector-${id}-${i}`).value = vector[i];
+        }
+        
+    } catch (error) {
+        alert(`Error parsing vector: ${error.message}`);
+    }
+}
+
+// Initialize text inputs when document loads
+document.addEventListener('DOMContentLoaded', function() {
+    // This should be added to the existing DOMContentLoaded event handler
+    addTextRepresentationButtons();
+    addTextInputsToOtherTabs();
+});
+    </script>
+</body>
+</html>
